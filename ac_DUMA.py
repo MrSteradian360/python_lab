@@ -80,32 +80,32 @@ def build(*patterns):
 
 # travelling through trie:
 def search(trie, text):
-    i = 0
+    current_node = 0
     appearance_list = []
     idx = 0
     # checking chars from text:
     while idx < len(text):
-        for key in trie[i].keys():
+        for key in trie[current_node].keys():
             # thick vertices:
             if key not in ['', '*', '#'] and key[-1] == text[idx]:
-                i = trie[i][key]
+                current_node = trie[current_node][key]
                 # checking if states before weren't accepting
                 idx1 = idx + 1
-                j = i
+                node = current_node
                 while True:
-                    if '' in trie[j].keys():
-                        if '#' in trie[j].keys():
-                            for key in trie[j].keys():
+                    if '' in trie[node].keys():
+                        if '#' in trie[node].keys():
+                            for key in trie[node].keys():
                                 if key not in ['', '#', '*']:
                                     length = len(key)
                             appearance_list.append(idx1 - (length - 1))
-                        j = trie[j]['']
+                        node = trie[node]['']
                     else:
                         break
                 break
             # faillinks:
             elif key == '':
-                i = trie[i][key]
+                current_node = trie[current_node][key]
                 idx -= 1  # guarantees staying on the same char
             # take no action on joker:
             elif key == '*':
