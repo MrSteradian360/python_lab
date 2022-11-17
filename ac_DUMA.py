@@ -14,7 +14,7 @@ def build(*patterns):
                 # deleting unnecessary items (when one pattern contains other):
                 if None in trie[current_num].values():
                     del trie[current_num][
-                        (list(trie[current_num].keys())[list(trie[current_num].values()).index(None)])]
+                        (list(trie[current_num].keys())[list(trie[current_num].values()).index(None)])]  # nie rozumiem tego
                 connections = trie[current_num]
                 # creating new nodes:
                 if prefix not in connections:
@@ -52,7 +52,7 @@ def build(*patterns):
 
     # adding faillinks to deeper vertices:
     # sorting trie based on length of keys of inside dict (guarantees that faillinks will be set in right order):
-    trie_sorted = {key: value for key, value in sorted(trie.items(), key=lambda item: len(list(item[1].keys())[0]))}
+    trie_sorted = {key: value for key, value in sorted(trie.items(), key=lambda item: len(list(item[1].keys())[0]))}  # skomplikowany zapis
     for vertex in trie_sorted:
         # adding faillinks to levels deeper than second:
         if len(list(trie_sorted[vertex].keys())[0]) > 2:
@@ -93,7 +93,7 @@ def search(trie, text):
                 idx1 = idx + 1
                 node = current_node
                 while True:
-                    if '' in trie[node].keys():
+                    if '' in trie[node].keys():  # co oznacza pusty napis w roli klucza?
                         if '#' in trie[node].keys():
                             for key in trie[node].keys():
                                 if key not in ['', '#', '*']:
