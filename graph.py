@@ -2,22 +2,33 @@ class Graph:
     def __init__(self, vertices: set, edges: list[set]):
         self.__vertices = set(vertices)
         self.__edges = list(edges)
+        # removing impossible edges:
+        for edge in self.__edges.copy():
+            if list(edge)[0] not in self.__vertices or list(edge)[1] not in self.__vertices:
+                self.__edges.remove(edge)
 
+    # adding vertices:
     def add_vertex(self, vertex):
         self.__vertices |= {vertex}
 
+    # removing vertices with adjacent edges:
     def remove_vertex(self, vertex):
         self.__vertices -= {vertex}
         for edge in self.__edges.copy():
             if vertex in edge:
                 self.__edges.remove(edge)
 
+    # adding edges:
     def add_edge(self, edge):
-        self.__edges.append(edge)
+        if list(edge)[0] in self.__vertices and list(edge)[1] in self.__vertices:
+            self.__edges.append(edge)
 
+    # removing edges:
     def remove_edge(self, edge):
-        self.__edges.remove(edge)
+        if edge in self.__edges:
+            self.__edges.remove(edge)
 
+    # finding neighbouring vertices of given vertex:
     def neighbours(self, vertex):
         __neighbours = []
         for edge in self.__edges:
@@ -28,10 +39,12 @@ class Graph:
                 __neighbours.append(edge[0])
         return __neighbours
 
+    # function returns BFS search iterator:
     def bfs(self, root):
         __bfs_iterator = BfsIterator(root, self.__vertices, self)
         return __bfs_iterator
 
+    # function returns DFS search iterator:
     def dfs(self, root):
         __dfs_iterator = DfsIterator(root, self.__vertices, self)
         return __dfs_iterator
@@ -42,9 +55,9 @@ class Graph:
 
 class BfsIterator:
     def __init__(self, root, vertices, graph):
-        self.__vertices = vertices
-        self.__order = list()
-        __status = dict()
+        self.__vertices = list(vertices)
+        self.__order = list()  # final order of edges
+        __status = dict()  # keeps track of visited edges
         __queue = list()
         for vertex in self.__vertices:
             __status[vertex] = 0
@@ -69,7 +82,7 @@ class BfsIterator:
 
 class DfsIterator:
     def __init__(self, root, vertices, graph):
-        self.__vertices = vertices
+        self.__vertices = list(vertices)
         self.__order = list()
         __status = dict()
         __stack = list()
@@ -111,6 +124,26 @@ for vertex in graph.bfs(1):
     print(vertex)
 print()
 
-for vertex in graph.bfs(1):
+for vertex in graph.dfs(1):
+    print(vertex)
+
+graph = Graph({"Warszawa","Kraków", "Gdańsk", "Wrocław", "Poznań"},
+              [{"Warszawa","Kraków"},{"Kraków", "Gdańsk"},{"Gdańsk","Wrocław"},{"Warszawa", "Lublin"}])
+graph.add_vertex("Katowice")
+print(graph)
+graph.remove_vertex("Wrocław")
+print(graph)
+graph.add_edge({"Katowice", "Gdańsk"})
+print(graph)
+graph.remove_edge({"Kraków","Gdańsk"})
+print(graph)
+print(graph.neighbours("Kraków"))
+print()
+
+for vertex in graph.bfs("Kraków"):
+    print(vertex)
+print()
+
+for vertex in graph.dfs("Kraków"):
     print(vertex)
 
