@@ -7,23 +7,23 @@ class Graph:
             if list(edge)[0] not in self.__vertices or list(edge)[1] not in self.__vertices:
                 self.__edges.remove(edge)
 
-    # adding vertices:
+    # adding vertex:
     def add_vertex(self, vertex):
         self.__vertices |= {vertex}
 
-    # removing vertices with adjacent edges:
+    # removing vertex with adjacent edges:
     def remove_vertex(self, vertex):
         self.__vertices -= {vertex}
         for edge in self.__edges.copy():
             if vertex in edge:
                 self.__edges.remove(edge)
 
-    # adding edges:
+    # adding edge:
     def add_edge(self, edge):
         if list(edge)[0] in self.__vertices and list(edge)[1] in self.__vertices:
             self.__edges.append(edge)
 
-    # removing edges:
+    # removing edge:
     def remove_edge(self, edge):
         if edge in self.__edges:
             self.__edges.remove(edge)
@@ -39,12 +39,12 @@ class Graph:
                 __neighbours.append(edge[0])
         return __neighbours
 
-    # function returns BFS search iterator:
+    # function returns BFS iterator:
     def bfs(self, root):
         __bfs_iterator = BfsIterator(root, self.__vertices, self)
         return __bfs_iterator
 
-    # function returns DFS search iterator:
+    # function returns DFS iterator:
     def dfs(self, root):
         __dfs_iterator = DfsIterator(root, self.__vertices, self)
         return __dfs_iterator
