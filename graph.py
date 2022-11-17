@@ -39,12 +39,12 @@ class Graph:
                 __neighbours.append(edge[0])
         return __neighbours
 
-    # function returns BFS iterator:
+    # function returning BFS iterator:
     def bfs(self, root):
         __bfs_iterator = BfsIterator(root, self.__vertices, self)
         return __bfs_iterator
 
-    # function returns DFS iterator:
+    # function returning DFS iterator:
     def dfs(self, root):
         __dfs_iterator = DfsIterator(root, self.__vertices, self)
         return __dfs_iterator
