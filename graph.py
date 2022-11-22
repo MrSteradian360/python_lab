@@ -1,9 +1,9 @@
 class Graph:
     def __init__(self, vertices: set, edges: list[set]):
         self.__vertices = set(vertices)
-        self.__edges = list(edges)
+        self.__edges = list(edges)  # mało wydajne rozwiązanie
         # removing impossible edges:
-        for edge in self.__edges.copy():
+        for edge in edges:
             if list(edge)[0] not in self.__vertices or list(edge)[1] not in self.__vertices:
                 self.__edges.remove(edge)
 
@@ -36,13 +36,12 @@ class Graph:
             if edge[0] == vertex:
                 __neighbours.append(edge[1])
             if edge[1] == vertex:
-                __neighbours.append(edge[0])
+                __neighbours.append(edge[0])  # ten graf jest skierowany, czy nieskierowany? Bo jeśli nie, to remove_edge źle działa
         return __neighbours
 
     # function returning BFS iterator:
     def bfs(self, root):
-        __bfs_iterator = BfsIterator(root, self.__vertices, self)
-        return __bfs_iterator
+        return BfsIterator(root, self.__vertices, self)
 
     # function returning DFS iterator:
     def dfs(self, root):
@@ -58,7 +57,7 @@ class BfsIterator:
         self.__vertices = list(vertices)
         self.__order = list()  # final order of edges
         __status = dict()  # keeps track of visited edges
-        __queue = list()
+        __queue = list()  # podkreślniki zupełnie niepotrzebne, bo to zmienne lokalne, a nie atrybuty
         for vertex in self.__vertices:
             __status[vertex] = 0
         __queue.append(root)
