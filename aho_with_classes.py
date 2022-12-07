@@ -1,8 +1,8 @@
 class TrieWithoutFaillinks:
-    trie = {}
+    trie = {}  # tego tu nie powinno być
 
     def __init__(self, *patterns):
-        self.patterns = patterns
+        self.patterns = patterns  # czy ten obiekt można uznać za gotowy do użycia?
 
     def build(self):
         # building trie
@@ -65,9 +65,9 @@ class BackwardsTrie:
 
 
 class Trie:
-    trie = {}
+    trie = {}  # tego tu nie powinno być
 
-    def __init__(self, trie_without_faillinks, backwards_trie):
+    def __init__(self, trie_without_faillinks, backwards_trie):  # czy to jest wygodne w użyciu?
         self.trie = trie_without_faillinks
         self.backwards = backwards_trie
 
