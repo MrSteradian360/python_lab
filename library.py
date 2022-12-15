@@ -66,9 +66,9 @@ class Worker(User):
         super().__init__(firstname, lastname, login, password)
         self.worker_idx = worker_idx
 
-        def __repr__(self):
-            return "Imię: " + self.firstname + "; nazwisko: " + self.lastname + "; login: " + self.login + \
-                   "; hasło: " + self.password + "; indeks czytelnika: " + str(self.worker_idx)
+    def __repr__(self):
+        return "Imię: " + self.firstname + "; nazwisko: " + self.lastname + "; login: " + self.login + \
+               "; hasło: " + self.password + "; indeks czytelnika: " + str(self.worker_idx)
 
 
 def menu(options):
