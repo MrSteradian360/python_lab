@@ -14,6 +14,7 @@ class Book:
         self.borrowed_by = borrowed_by
         self.key_words = key_words
         self.reservation = reservation
+        self.extended = False
 
     def __repr__(self):
         return str("idx: " + str(
@@ -25,13 +26,12 @@ class Book:
         self.available = str(date.date())
         self.borrowed_by = str(user)
         print("Wypożyczono książkę na 30 dni! Data oddania: " + self.available)
-        print(self.borrowed_by)
 
     def extend(self):
         date = datetime.strptime(self.available, '%Y-%m-%d')
         self.available = str((date + timedelta(days=30)).date())
+        self.extended = True
         print("Przedłużono wypożyczenie o 30 dni! Data oddania: " + self.available)
-        print(self.borrowed_by)
 
     def reserve(self, user):
         self.reservation = user
@@ -39,7 +39,8 @@ class Book:
 
     def returned(self):
         self.available = 'dostępna'
-        print("Książka zwrócona")
+        self.borrowed_by = None
+        self.extended = False
 
 
 class User:
@@ -96,8 +97,8 @@ def logging_in(user_type):
             while True:
                 menu({"Zaakceptuj zwrot książki": (accept_return, (), {}),
                       "Dodaj nową książkę": (add_book, (), {}),
-                      "Usuń książkę z systemu": (),
-                      "Dodaj czytelnika": (),
+                      "Usuń książkę z systemu": (remove_book, (), {}),
+                      "Dodaj czytelnika": (add_reader, (), {}),
                       "Przeglądaj katalog": (search_catalog, (), {}),
                       "Wyjdź": (exit, (), {})})
         else:
@@ -174,7 +175,7 @@ def reserve_book(login):
     args = {}
     print("Książki dostępne do rezerwacji:")
     for book in books:
-        if book.borrowed_by is not None and book.reservation is None:
+        if book.borrowed_by is not None and book.reservation is None and book.borrowed_by != login:
             args[repr(book)] = (book.reserve, (login,), {})
     args |= {"Powrót": (go_back, (), {})}
     menu(args)
@@ -184,7 +185,7 @@ def extend(login):
     args = {}
     print("Wypożyczenie której książki chcesz przedłużyć?")
     for book in books:
-        if book.borrowed_by == login and book.reservation is None:
+        if book.borrowed_by == login and book.reservation is None and not book.extended:
             args[repr(book)] = (book.extend, (), {})
     args |= {"Powrót": (go_back, (), {})}
     menu(args)
@@ -230,6 +231,10 @@ def remove_book():
 def add_reader():
     try:
         reader_idx = input("Indeks czytelnika: ")
+        for reader in readers:
+            if reader.reader_idx == reader_idx:
+                print("Podany indeks już istnieje!")
+                return
         firstname = input("Imię czytelnika: ")
         lastname = input("Nazwisko czytelnika: ")
         login = input("Login czytelnika: ")
@@ -242,7 +247,7 @@ def add_reader():
             if reader.password == password:
                 print("Podane hasło już istnieje!")
                 return
-        reader = Reader(reader_idx, firstname, lastname, login, password)
+        reader = Reader(firstname, lastname, login, password, reader_idx)
         readers.add(reader)
         print("Czytelnik dodany pomyślnie!")
     except ValueError:
@@ -258,26 +263,37 @@ def add_book():
                 return
         title = input("Tytuł: ")
         author = input("Autor: ")
-        available = input("Data oddania/ dostępna: ")
+        available = input("Data oddania (format rrrr-mm-dd)/ dostępna: ")
+        if available != 'dostępna':
+            date_correctness_check = datetime.strptime(available, '%Y-%m-%d')
         borrowed_by = input("Wypożyczony przez: ")
-        exists = False
-        for reader in readers:
-            if reader.login == borrowed_by:
-                exists = True
-                break
-        if not exists:
-            print("Nie ma takiego czytelnika!")
-            return
+        if borrowed_by == 'None':
+            borrowed_by = None
+        else:
+            exists = False
+            for reader in readers:
+                if reader.login == borrowed_by:
+                    exists = True
+                    break
+            if not exists:
+                print("Nie ma takiego czytelnika!")
+                return
         key_words = set(input("Słowa kluczowe: ").replace(',', '').split())
         reservation = input("Rezerwacja: ")
-        exists = False
-        for reader in readers:
-            if reader.login == reservation:
-                exists = True
-                break
-        if not exists:
-            print("Nie ma takiego czytelnika!")
-            return
+        if reservation == 'None':
+            reservation = None
+        else:
+            if reservation == borrowed_by:
+                print("Użytkownik nie może zarezerwować książki, którą ma obecnie wypożyczoną!")
+                return
+            exists = False
+            for reader in readers:
+                if reader.login == reservation:
+                    exists = True
+                    break
+            if not exists:
+                print("Nie ma takiego czytelnika!")
+                return
         book = Book(idx, author, title, available, borrowed_by, key_words, reservation)
         books.append(book)
         print("Książka dodana pomyślnie!")
@@ -286,14 +302,14 @@ def add_book():
 
 
 def get_data():
-    if os.path.isfile('./worker_credentials.pickle'):
-        with open('./worker_credentials.pickle', "rb") as file:
+    if os.path.isfile('./workers.pickle'):
+        with open('./workers.pickle', "rb") as file:
             workers = pickle.load(file)
     else:
         workers = {Worker('Adam', 'Nowak', 'w', 'w', 1)}
 
-    if os.path.isfile('./reader_credentials.pickle'):
-        with open('./reader_credentials.pickle', "rb") as file:
+    if os.path.isfile('./readers.pickle'):
+        with open('./readers.pickle', "rb") as file:
             readers = pickle.load(file)
     else:
         readers = {Reader('Anna', 'Kowalska', 'u', 'u', 1)}
@@ -316,27 +332,24 @@ def get_data():
 
 
 def save_data():
-    with open('./worker_cred.pickle', "wb") as file:
+    with open('./workers.pickle', "wb") as file:
         pickle.dump(workers, file)
-    with open('./reader_credentials.pickle', "wb") as file:
+    with open('./readers.pickle', "wb") as file:
         pickle.dump(readers, file)
     with open('./books.pickle', "wb") as file:
         pickle.dump(books, file)
 
 
-workers, readers, books = get_data()
-
-menu({"Zaloguj się":
-          (menu, ({
-                      "Czytelnik":
-                          (logging_in, 'c', {}),
-                      "Bibliotekarz":
-                          (logging_in, 'b', {}),
-                      "Wyjdź": (exit, (), {})
-                  },), {}), "Wyjdź": (exit, (), {})})
-save_data()
-
-# search_catalog()
-# books[1].extend()
-# extend('u')
-#reserve_book('u')
+if __name__ == '__main__':
+    workers, readers, books = get_data()
+    try:
+        menu({"Zaloguj się":
+                  (menu, ({
+                              "Czytelnik":
+                                  (logging_in, 'c', {}),
+                              "Bibliotekarz":
+                                  (logging_in, 'b', {}),
+                              "Wyjdź": (exit, (), {})
+                          },), {}), "Wyjdź": (exit, (), {})})
+    finally:
+        save_data()
