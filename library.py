@@ -360,6 +360,4 @@ if __name__ == '__main__':
                               "Wyjdź": (exit, (), {})
                           },), {}), "Wyjdź": (exit, (), {})})
     finally:
-        for book in books:
-            print(book)
         save_data()
