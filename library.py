@@ -14,7 +14,7 @@ class Book:
         self.borrowed_by = borrowed_by  # who has the book; if no one, borrowed_by == None
         self.key_words = key_words
         self.reservation = reservation  # who reserved the book to borrow it next; if no one reservation == None
-        self.extended = False  # is book being extended
+        self.extended = False  # is book reservation being extended
 
     def __repr__(self):
         return str("idx: " + str(
