@@ -7,14 +7,14 @@ from datetime import datetime, timedelta
 class Book:
     def __init__(self, idx: int, title: str, author: str, available: str, borrowed_by: str, key_words: set[str],
                  reservation: str):
-        self.idx = idx
+        self.idx = idx  # book index
         self.title = title
         self.author = author
-        self.available = available
-        self.borrowed_by = borrowed_by
+        self.available = available  # date when book will be available; if now, available == 'dostępna'
+        self.borrowed_by = borrowed_by  # who has the book; if no one, borrowed_by == None
         self.key_words = key_words
-        self.reservation = reservation
-        self.extended = False
+        self.reservation = reservation  # who reserved the book to borrow it next; if no one reservation == None
+        self.extended = False  # is book being extended
 
     def __repr__(self):
         return str("idx: " + str(
@@ -22,7 +22,7 @@ class Book:
                    "; wypożyczona do: " + self.available + "; słowa kluczowe: " + str(self.key_words))
 
     def borrow(self, user):
-        date = datetime.now() + timedelta(days=30)
+        date = datetime.now() + timedelta(days=30)  # extending the borrowing by 30 days
         self.available = str(date.date())
         self.borrowed_by = str(user)
         print("Wypożyczono książkę na 30 dni! Data oddania: " + self.available)
@@ -56,11 +56,19 @@ class Reader(User):
         super().__init__(firstname, lastname, login, password)
         self.reader_idx = reader_idx
 
+    def __repr__(self):
+        return "Imię: "+ self.firstname + "; nazwisko: " + self.lastname + "; login: " + self.login +\
+               "; hasło: " + self.password + "; indeks czytelnika: "+str(self.reader_idx)
+
 
 class Worker(User):
     def __init__(self, firstname, lastname, login, password, worker_idx):
         super().__init__(firstname, lastname, login, password)
-        self.reader_idx = worker_idx
+        self.worker_idx = worker_idx
+
+        def __repr__(self):
+            return "Imię: " + self.firstname + "; nazwisko: " + self.lastname + "; login: " + self.login + \
+                   "; hasło: " + self.password + "; indeks czytelnika: " + str(self.worker_idx)
 
 
 def menu(options):
@@ -265,7 +273,7 @@ def add_book():
         author = input("Autor: ")
         available = input("Data oddania (format rrrr-mm-dd)/ dostępna: ")
         if available != 'dostępna':
-            date_correctness_check = datetime.strptime(available, '%Y-%m-%d')
+            datetime.strptime(available, '%Y-%m-%d')  # checking if date is correct
         borrowed_by = input("Wypożyczony przez: ")
         if borrowed_by == 'None':
             borrowed_by = None
@@ -294,7 +302,7 @@ def add_book():
             if not exists:
                 print("Nie ma takiego czytelnika!")
                 return
-        book = Book(idx, author, title, available, borrowed_by, key_words, reservation)
+        book = Book(idx, title, author, available, borrowed_by, key_words, reservation)
         books.append(book)
         print("Książka dodana pomyślnie!")
     except ValueError:
@@ -352,4 +360,6 @@ if __name__ == '__main__':
                               "Wyjdź": (exit, (), {})
                           },), {}), "Wyjdź": (exit, (), {})})
     finally:
+        for book in books:
+            print(book)
         save_data()
