@@ -39,6 +39,6 @@ class KNNClassifier:
         return results_array
 
 
-knn_classifier1 = KNNClassifier(2, 'taxi')
-knn_classifier1.train(['kaczka', 'pies', 'kaczka'], [0, 9, 9], [9, 8, 10], [0, 1, 2])
-print(knn_classifier1.predict([3, 4, 5], [1, 4, 6], [0, 0, 0], [9, 8, 9]))
+knn_classifier1 = KNNClassifier(3, 'cosine')
+knn_classifier1.train(['kaczka', 'pies', 'kaczka', 'pies', 'pies'], [0, 9, 9], [9, 8, 10], [0, 1, 2], [0, 4, 5], [9, 5, 1])
+print(knn_classifier1.predict([3, 4, 5], [1, 4, 6], [4, 5, 0], [3, 8, 9], [4.5, 3, 4]))
