@@ -67,20 +67,20 @@ knn_classifier_3 = KNNClassifier(7, 'euclidean')
 
 with open('dataset') as data:
     lines = data.readlines()
-    vector = []
+    vectors = []
     labels = []
     for line in lines:
         data_list = list(map(float, line.split()))
-        vector.append(data_list[:-1])
+        vectors.append(data_list[:-1])
         labels.append(data_list[-1])
 
-    knn_classifier_1.train(labels[:int(0.7 * len(labels))], *vector[:int(0.7 * len(labels))])
-    knn_classifier_2.train(labels[:int(0.7 * len(labels))], *vector[:int(0.7 * len(labels))])
-    knn_classifier_3.train(labels[:int(0.7 * len(labels))], *vector[:int(0.7 * len(labels))])
+    knn_classifier_1.train(labels[:int(0.7 * len(labels))], *vectors[:int(0.7 * len(labels))])
+    knn_classifier_2.train(labels[:int(0.7 * len(labels))], *vectors[:int(0.7 * len(labels))])
+    knn_classifier_3.train(labels[:int(0.7 * len(labels))], *vectors[:int(0.7 * len(labels))])
 
-    p1 = knn_classifier_1.predict(*vector[int(0.7 * len(labels)):])
-    p2 = knn_classifier_2.predict(*vector[int(0.7 * len(labels)):])
-    p3 = knn_classifier_3.predict(*vector[int(0.7 * len(labels)):])
+    p1 = knn_classifier_1.predict(*vectors[int(0.7 * len(labels)):])
+    p2 = knn_classifier_2.predict(*vectors[int(0.7 * len(labels)):])
+    p3 = knn_classifier_3.predict(*vectors[int(0.7 * len(labels)):])
 
     print(evaluation(p1, labels[int(0.7 * len(labels)):]))
     print(evaluation(p2, labels[int(0.7 * len(labels)):]))
