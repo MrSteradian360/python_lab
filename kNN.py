@@ -11,7 +11,7 @@ class KNNClassifier:
         self.true_values = []
 
     def train(self, true_values: list, *observations: list[float]):
-        self.true_values = list(true_values)
+        self.true_values += list(true_values)
         self.test_set += list(observations)
 
     def predict(self, *observations: list[float]):
@@ -40,5 +40,49 @@ class KNNClassifier:
 
 
 knn_classifier1 = KNNClassifier(3, 'cosine')
-knn_classifier1.train(['kaczka', 'pies', 'kaczka', 'pies', 'pies'], [0, 9, 9], [9, 8, 10], [0, 1, 2], [0, 4, 5], [9, 5, 1])
+knn_classifier1.train(['kaczka', 'pies', 'kaczka', 'pies', 'pies'], [0, 9, 9], [9, 8, 10], [0, 1, 2], [0, 4, 5],
+                      [9, 5, 1])
 print(knn_classifier1.predict([3, 4, 5], [1, 4, 6], [4, 5, 0], [3, 8, 9], [4.5, 3, 4]))
+
+
+def evaluation(received, true):
+    received = np.array(received)
+    true = np.array(true)
+    tp = np.sum(np.logical_and(received == 1., true == 1.))
+    tn = np.sum(np.logical_and(received == 0., true == 0.))
+    fp = np.sum(np.logical_and(received == 1., true == 0.))
+    fn = np.sum(np.logical_and(received == 0., true == 1.))
+
+    accuracy = (tp + tn) / (tp + tn + fp + fn)
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    f1 = (2 * precision*recall)/(precision+recall)
+
+    return accuracy, precision, recall, f1
+
+
+knn_classifier_1 = KNNClassifier(3, 'taxi')
+knn_classifier_2 = KNNClassifier(5, 'maximum')
+knn_classifier_3 = KNNClassifier(7, 'euclidean')
+
+with open('dataset') as data:
+    lines = data.readlines()
+    idx = 0
+    vector = []
+    labels = []
+    for line in lines:
+        data_list = list(map(float, line.split()))
+        vector.append(data_list[:-1])
+        labels.append(data_list[-1])
+
+    knn_classifier_1.train(labels[:int(0.7 * len(labels))], *vector[:int(0.7 * len(labels))])
+    knn_classifier_2.train(labels[:int(0.7 * len(labels))], *vector[:int(0.7 * len(labels))])
+    knn_classifier_3.train(labels[:int(0.7 * len(labels))], *vector[:int(0.7 * len(labels))])
+
+    p1 = knn_classifier_1.predict(*vector[int(0.7 * len(labels)):])
+    p2 = knn_classifier_2.predict(*vector[int(0.7 * len(labels)):])
+    p3 = knn_classifier_3.predict(*vector[int(0.7 * len(labels)):])
+
+    print(evaluation(p1, labels[int(0.7 * len(labels)):]))
+    print(evaluation(p2, labels[int(0.7 * len(labels)):]))
+    print(evaluation(p3, labels[int(0.7 * len(labels)):]))
