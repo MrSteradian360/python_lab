@@ -12,7 +12,7 @@ class KNNClassifier:
 
     def train(self, true_values: list, *observations: list[float]):
         self.true_values += list(true_values)
-        self.test_set += list(observations)
+        self.test_set += list(observations)  # test set? list?
 
     def predict(self, *observations: list[float]):
         test_set = np.array(self.test_set)
@@ -27,7 +27,7 @@ class KNNClassifier:
             if self.metric == 'maximum':
                 distance = np.max(np.absolute(test_set - observation), axis=1)
             if self.metric == 'cosine':
-                distance = np.sum(test_set * observation, axis=1) / \
+                distance = np.sum(test_set * observation, axis=1) / \  # 1-
                            (np.sqrt(np.sum(test_set * test_set, axis=1)) *
                             np.sqrt(np.sum(observation * observation)))
 
@@ -39,7 +39,7 @@ class KNNClassifier:
         return results_array
 
 
-knn_classifier_0 = KNNClassifier(3, 'cosine')
+knn_classifier_0 = KNNClassifier(3, 'cosine')  # metryka jako string?
 knn_classifier_0.train(['kaczka', 'pies', 'kaczka', 'pies', 'pies'], [0, 9, 9], [9, 8, 10], [0, 1, 2], [0, 4, 5],
                        [9, 5, 1])
 print(knn_classifier_0.predict([3, 4, 5], [1, 4, 6], [4, 5, 0], [3, 8, 9], [4.5, 3, 4]))
