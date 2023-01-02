@@ -1,3 +1,5 @@
+# to nie jest zadanie na jeden plik
+
 import datetime
 import pickle
 import os
@@ -25,7 +27,7 @@ class Book:
         date = datetime.now() + timedelta(days=30)  # extending the borrowing by 30 days
         self.available = str(date.date())
         self.borrowed_by = str(user)
-        print("Wypożyczono książkę na 30 dni! Data oddania: " + self.available)
+        print("Wypożyczono książkę na 30 dni! Data oddania: " + self.available)  # komunikacja z użytkownikiem w metodzie, która raczej odpowiada za logikę biznesową
 
     def extend(self):
         date = datetime.strptime(self.available, '%Y-%m-%d')
@@ -82,7 +84,7 @@ def menu(options):
                 func, args, kwargs = options[choice - 1][1]
                 return func(*args, **kwargs)
         except ValueError:
-            pass
+            pass  # pusty except wymaga komentarza
 
 
 def logging_in(user_type):
