@@ -12,7 +12,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.tree import DecisionTreeClassifier
 
 
-def text2lines(filename, length):
+def text2strings(filename, num_words):
     punct = dict.fromkeys(string.punctuation, '')
     with open(filename, encoding='ISO-8859-1') as file:
         lines = []
@@ -25,8 +25,8 @@ def text2lines(filename, length):
             line = line.rstrip()
             line = line.split()
             lines += line
-        lines = [' '.join(lines[i * length:(i + 1) * length]) for i in range((len(lines) + length - 1) // length)]
-    return lines
+        strings = [' '.join(lines[i * num_words:(i + 1) * num_words]) for i in range((len(lines) + num_words - 1) // num_words)]
+    return strings
 
 
 def classify(n, length, classifier_type):
@@ -42,7 +42,7 @@ def classify(n, length, classifier_type):
 
     for name in files:
         if name.endswith(".txt"):
-            lines = text2lines('lang/' + name, length)
+            lines = text2strings('lang/' + name, length)
             data.extend(lines)
             country = name[:-4]
             index = labels.index(country)
