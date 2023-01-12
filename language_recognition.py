@@ -12,7 +12,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.tree import DecisionTreeClassifier
 
 
-def text2strings(filename, num_words):
+def text2strings(filename, str_words_num):
     punct = dict.fromkeys(string.punctuation, '')
     with open(filename, encoding='ISO-8859-1') as file:
         lines = []
@@ -25,11 +25,11 @@ def text2strings(filename, num_words):
             line = line.rstrip()
             line = line.split()
             lines += line
-        strings = [' '.join(lines[i*num_words: (i + 1)*num_words]) for i in range((len(lines) + num_words - 1) // num_words)]
+        strings = [' '.join(lines[i*str_words_num: (i + 1)*str_words_num]) for i in range((len(lines) + str_words_num - 1) // str_words_num)]
     return strings
 
 
-def classify(n, length, classifier_type):
+def classify(n, input_vector_word_num, classifier_type):
     os.listdir("lang")
 
     files = os.listdir("lang")
@@ -42,15 +42,13 @@ def classify(n, length, classifier_type):
 
     for name in files:
         if name.endswith(".txt"):
-            lines = text2strings('lang/' + name, length)
+            lines = text2strings('lang/' + name, input_vector_word_num)
             data.extend(lines)
             country = name[:-4]
             index = labels.index(country)
             targets += [index] * len(lines)
 
-    res = train_test_split(data, targets,
-                           test_size=0.2,
-                           random_state=42)
+    res = train_test_split(data, targets, test_size=0.2)
     train_data, test_data, train_targets, test_targets = res
 
     count_vectorizer = CountVectorizer(analyzer='char_wb', ngram_range=(n, n))
