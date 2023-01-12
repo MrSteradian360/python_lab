@@ -25,7 +25,7 @@ def text2strings(filename, num_words):
             line = line.rstrip()
             line = line.split()
             lines += line
-        strings = [' '.join(lines[i * num_words:(i + 1) * num_words]) for i in range((len(lines) + num_words - 1) // num_words)]
+        strings = [' '.join(lines[i*num_words: (i + 1)*num_words]) for i in range((len(lines) + num_words - 1) // num_words)]
     return strings
 
 
