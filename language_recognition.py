@@ -48,8 +48,8 @@ def classify(n, input_vector_word_num, classifier_type):
             index = labels.index(country)
             targets += [index] * len(lines)
 
-    res = train_test_split(data, targets, test_size=0.2)
-    train_data, test_data, train_targets, test_targets = res
+    splitted = train_test_split(data, targets, test_size=0.2)
+    train_data, test_data, train_targets, test_targets = splitted
 
     count_vectorizer = CountVectorizer(analyzer='char_wb', ngram_range=(n, n))
 
