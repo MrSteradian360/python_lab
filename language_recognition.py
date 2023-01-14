@@ -14,9 +14,9 @@ from sklearn.tree import DecisionTreeClassifier
 
 def text2strings(filename, str_words_num):
     punct = dict.fromkeys(string.punctuation, '')
-    with open(filename, encoding='ISO-8859-1') as file:
+    with open(filename, encoding='ISO-8859-1') as file: # przesłonięcie symbolu wbudowanego
         lines = []
-        while True:
+        while True:  # nie lepiej for line in file?
             line = file.readline()
             if not line:
                 break
