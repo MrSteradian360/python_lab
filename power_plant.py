@@ -16,7 +16,7 @@ df = pd.concat([p1, p2], ignore_index=True)
 
 # zad 2
 df.dropna(inplace=True)
-df.reset_index(drop=True, inplace=True)
+df.reset_index(drop=True, inplace=True) # ??
 
 # zad 3
 generator1 = df.loc[
@@ -27,7 +27,7 @@ plt.show()
 
 # zad 4
 generators = df.loc[
-    (df['DATE_TIME'] >= '2020-05-17') & (df['DATE_TIME'] <= '2020-05-23')]
+    (df['DATE_TIME'] >= '2020-05-17') & (df['DATE_TIME'] <= '2020-05-23')]  # DRY
 generators.insert(0, 'mean', generators.groupby(['DATE_TIME'])['AC_POWER'].transform(np.mean))
 generator1_merge = generator1.merge(generators, how='outer', on='DATE_TIME', sort=True)
 
